@@ -1,19 +1,23 @@
-import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import "./App.css";
+import { useReduxDispatch, useReduxSelector } from "./hooks";
+import { decrement, increment, restart } from "./store/ducks/counter/actions";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const count = useReduxSelector((state) => state.counter.counter.value);
+  const dispatch = useReduxDispatch();
 
-  const obj = { a: 1, b: 2 };
-  // still the same object outside, but the contents have changed
-  obj.b = 3;
+  const incre = () => {
+    dispatch(increment());
+  };
 
-  const arr = ["a", "b"];
-  // In the same way, we can change the contents of this array
-  arr.push("c");
-  arr[1] = "d";
-  console.log((arr[1] = "d"));
+  const decre = () => {
+    dispatch(decrement());
+  };
+
+  const rest = () => {
+    dispatch(restart());
+  };
 
   return (
     <div className="App">
@@ -25,14 +29,40 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <h1>Counter {count}</h1>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <div>
+          <button onClick={incre}>Increment</button>
+        </div>
+        <div
+          style={{
+            width: 20,
+          }}
+        />
+        <div>
+          <button onClick={decre}>Decrement</button>
+        </div>
+        <div
+          style={{
+            width: 20,
+          }}
+        />
+        <div>
+          <button>+ 5</button>
+        </div>
+        <div
+          style={{
+            width: 20,
+          }}
+        />
+        <div>
+          <button onClick={rest}>Restart</button>
+        </div>
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
@@ -42,3 +72,20 @@ function App() {
 }
 
 export default App;
+
+// const masStateToProps = (state) => {
+//   return {
+//     count: state.counter.value,
+//   };
+// };
+
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     increment: () => dispatch({ type: "counter/increment" }),
+//     decrement: () => dispatch({ type: "counter/decrement" }),
+//     ten: (amount) => dispatch({ type: "counter/ten", payload: amount }),
+//     restart: () => dispatch({ type: "counter/restart" }),
+//   };
+// };
+
+// export default connect(masStateToProps, mapDispatchToProps)(App);
