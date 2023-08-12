@@ -1,7 +1,7 @@
 import { createStore, Store } from "redux";
-import { CounterState } from "./ducks/counter/types";
 
 import rootReducer from "./ducks/rootReducer";
+import { CounterState } from "./ducks/counter";
 
 export interface ApplicationState {
   counter: CounterState;

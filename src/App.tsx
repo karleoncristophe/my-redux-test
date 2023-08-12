@@ -1,12 +1,14 @@
 import reactLogo from "./assets/react.svg";
 import "./App.css";
 import { useReduxDispatch, useReduxSelector } from "./hooks";
-import { decrement, increment, restart } from "./store/ducks/counter/actions";
+import { addFive, countSelector, decrement, setName, increment, nameSelector, restart, stepSelector, setStep, get } from "./store/ducks/counter";
+import { useEffect } from "react";
 
 function App() {
-  const count = useReduxSelector((state) => state.counter.counter.value);
+  const count = useReduxSelector(countSelector);
+  const name = useReduxSelector(nameSelector)
+  const step = useReduxSelector(stepSelector)
   const dispatch = useReduxDispatch();
-
   const incre = () => {
     dispatch(increment());
   };
@@ -19,6 +21,11 @@ function App() {
     dispatch(restart());
   };
 
+
+  useEffect(() => {
+    dispatch(get())
+  }, [])
+
   return (
     <div className="App">
       <div>
@@ -30,6 +37,12 @@ function App() {
         </a>
       </div>
       <h1>Counter {count}</h1>
+      <h1>Name: {name}</h1>
+      <input value={name} onChange={(e) => dispatch(setName(e.target.value))} />
+      <h1>Step: {step}</h1>
+      <input value={step} type="number" onChange={(e) => dispatch(setStep(Number(e.target.value)))} />
+    
+      <h1></h1>
       <div
         style={{
           display: "flex",
@@ -53,7 +66,7 @@ function App() {
           }}
         />
         <div>
-          <button>+ 5</button>
+          <button onClick={() => dispatch(addFive())}>+ {step}</button>
         </div>
         <div
           style={{
