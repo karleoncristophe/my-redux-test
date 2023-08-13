@@ -1,13 +1,17 @@
 import reactLogo from "./assets/react.svg";
 import "./App.css";
 import { useReduxDispatch, useReduxSelector } from "./hooks";
-import { addFive, countSelector, decrement, setName, increment, nameSelector, restart, stepSelector, setStep, get } from "./store/ducks/counter";
+import { addFive, countSelector, decrement, setName, increment, nameSelector, restart, stepSelector, setStep, get, descriptionsSelector, descriptionsErrorSelector } from "./store/counter";
 import { useEffect } from "react";
 
 function App() {
   const count = useReduxSelector(countSelector);
   const name = useReduxSelector(nameSelector)
   const step = useReduxSelector(stepSelector)
+  const descriptions = useReduxSelector(descriptionsSelector)
+  const descriptionsError = useReduxSelector(descriptionsErrorSelector)
+
+
   const dispatch = useReduxDispatch();
   const incre = () => {
     dispatch(increment());
@@ -80,6 +84,8 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+			{JSON.stringify(descriptions)}
+			error: {descriptionsError}
     </div>
   );
 }

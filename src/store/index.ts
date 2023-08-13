@@ -1,17 +1,23 @@
-import { createStore, Store } from "redux";
+import { applyMiddleware, createStore, Store } from "redux";
 
-import rootReducer from "./ducks/rootReducer";
-import { CounterState } from "./ducks/counter";
+import reducer from "./redux";
+import { CounterState } from "./counter";
+import createSagaMiddleware from "redux-saga";
+import watch from "./saga";
 
 export interface ApplicationState {
   counter: CounterState;
 }
 
+const sagaMiddleware = createSagaMiddleware()
+
 export const store: Store<ApplicationState> = createStore(
-  rootReducer,
-  // @ts-ignore
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  reducer,
+	applyMiddleware(sagaMiddleware),
+  // window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
+
+sagaMiddleware.run(watch)
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;

@@ -1,8 +1,8 @@
 import { Action } from "redux";
-import { ApplicationState } from "..";
+import { ApplicationState } from ".";
 import { SagaIterator } from "redux-saga";
 import { call, put, takeLatest } from 'redux-saga/effects'
-import { getPokemon } from "../httpClient";
+import { Description, getPokemon } from "./httpClient";
 
 // Actions types
 export enum CounterTypes {
@@ -13,6 +13,8 @@ export enum CounterTypes {
   COUNTER_ADDNAME = "@COUNTER/ADDNAME",
   COUNTER_ADDSTEP = "@COUNTER/ADDSTEP",
   GET = "@GET",
+  GET_SUCCESS = "@GET/SUCCESS",
+  GET_ERROR = "@GET/ERROR",
 }
 
 
@@ -21,6 +23,8 @@ export interface ICounter {
   value: number;
   name: string
   step: number
+  descriptions: Description[] | []
+	descriptionsError: string
 }
 
 export interface SetNameAction extends Action {
@@ -45,7 +49,9 @@ const INITIAL_STATE: CounterState = {
   counter: {
     value: 0,
     name: '',
-    step: 5
+    step: 5,
+		descriptions: [],
+		descriptionsError: ''
   },
 };
 
@@ -116,8 +122,27 @@ const reducer = (state = INITIAL_STATE, action: Actions) => {
         },
       };
     }
-    case CounterTypes.GET:
-      return { ...state }
+
+		case CounterTypes.GET_SUCCESS: {
+      return {
+        ...state,
+        counter: {
+          ...state.counter,
+          descriptions: action.payload,
+        },
+      };
+    }
+
+		case CounterTypes.GET_ERROR: {
+      return {
+        ...state,
+        counter: {
+          ...state.counter,
+          descriptionsError: action.payload,
+        },
+      };
+    }
+    
     default: {
       return state;
     }
@@ -125,6 +150,18 @@ const reducer = (state = INITIAL_STATE, action: Actions) => {
 };
 
 //Actions
+export const get = () => {  
+  return { type: CounterTypes.GET };
+};
+
+export const setGetSuccess = (payload: Description[]) => {  
+  return { type: CounterTypes.GET_SUCCESS, payload };
+};
+
+export const setGetError = (payload: string) => {  
+  return { type: CounterTypes.GET_ERROR, payload };
+};
+
 export const increment = () => {
   return { type: CounterTypes.COUNTER_INCREMENT };
 };
@@ -141,10 +178,6 @@ export const addFive = () => {
   return { type: CounterTypes.COUNTER_ADDFIVE };
 };
 
-export const get = () => {  
-  return { type: CounterTypes.GET };
-};
-
 export const setName = (payload: string): SetNameAction => ({
   type: CounterTypes.COUNTER_ADDNAME,
   payload,
@@ -159,30 +192,22 @@ export const setStep = (payload: number): SetStepAction => ({
 export const countSelector = (state: ApplicationState) => state.counter.counter.value
 export const nameSelector = (state: ApplicationState) => state.counter.counter.name
 export const stepSelector = (state: ApplicationState) => state.counter.counter.step
+export const descriptionsSelector = (state: ApplicationState) => state.counter.counter.descriptions
+export const descriptionsErrorSelector = (state: ApplicationState) => state.counter.counter.descriptionsError
 
 //Sagas
 export function* getWorker(): SagaIterator {
-  console.log("aqui");
-  
+  console.log("getWorker");
   try {
-    const res = yield call(getPokemon)
-   console.log(res);
-   
-    // yield put(getSuccess(res.data.conteudo))
+		// throw new Error()
+    const res: Description[] = yield call(getPokemon)
+    yield put(setGetSuccess(res))
   } catch (err) {
-    // const payload = handleApiError(err, {
-    //   title: 'Falha ao obter parâmetros',
-    //   description:
-    //     'Um erro inesperado aconteceu. Por favor, tente novamente mais tarde.',
-    // })
-
-    // yield put(getFailure(payload))
+    yield put(setGetError('Algo de errado aconteceu. Por favor, tente mais tarde!'))
   }
 }
 
-export function* watch(): SagaIterator {
-  console.log("watch");
-  
+export function* watch(): SagaIterator {  
   yield takeLatest(CounterTypes.GET, getWorker)
 }
 
