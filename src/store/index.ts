@@ -1,25 +1,27 @@
-import { applyMiddleware, createStore, Store } from "redux";
+import { applyMiddleware, createStore, Store } from 'redux'
 
-import reducer from "./redux";
-import { CounterState } from "./counter";
-import createSagaMiddleware from "redux-saga";
-import watch from "./saga";
+import reducer from './redux'
+import { CounterState } from './counter'
+import createSagaMiddleware from 'redux-saga'
+import watch from './saga'
+import { PokemonState } from './pokemon'
 
 export interface ApplicationState {
-  counter: CounterState;
+  counter: CounterState
+  pokemon: PokemonState
 }
 
 const sagaMiddleware = createSagaMiddleware()
 
 export const store: Store<ApplicationState> = createStore(
   reducer,
-	applyMiddleware(sagaMiddleware),
+  applyMiddleware(sagaMiddleware),
   // window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
+)
 
 sagaMiddleware.run(watch)
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>;
+export type RootState = ReturnType<typeof store.getState>
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-export type AppDispatch = typeof store.dispatch;
+export type AppDispatch = typeof store.dispatch

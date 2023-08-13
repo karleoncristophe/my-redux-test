@@ -1,0 +1,7 @@
+{
+  "extends": "@rocketseat/eslint-config/react",
+	"ignorePatterns": ["./next.config.js"],
+  "rules": {
+    "no-unused-vars": "warn"
+  }
+}

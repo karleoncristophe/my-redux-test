@@ -1,96 +1,58 @@
-import reactLogo from "./assets/react.svg";
-import "./App.css";
-import { useReduxDispatch, useReduxSelector } from "./hooks";
-import { addFive, countSelector, decrement, setName, increment, nameSelector, restart, stepSelector, setStep, get, descriptionsSelector, descriptionsErrorSelector } from "./store/counter";
-import { useEffect } from "react";
+import reactLogo from './assets/react.svg'
+import './App.css'
+import { useReduxDispatch, useReduxSelector } from './hooks'
+import {
+  addFive,
+  countSelector,
+  decrement,
+  setName,
+  increment,
+  nameSelector,
+  restart,
+  stepSelector,
+  setStep,
+  get,
+  descriptionsSelector,
+  descriptionsErrorSelector,
+} from './store/counter'
+import { useEffect } from 'react'
+import {
+  getPokemonList,
+  pokemonErrorSelector,
+  pokemonSelector,
+} from './store/pokemon'
+import { extractPokemonIdFromUrl } from './utils/getId'
 
 function App() {
-  const count = useReduxSelector(countSelector);
-  const name = useReduxSelector(nameSelector)
-  const step = useReduxSelector(stepSelector)
-  const descriptions = useReduxSelector(descriptionsSelector)
-  const descriptionsError = useReduxSelector(descriptionsErrorSelector)
+  const pokemonList = useReduxSelector(pokemonSelector)
+  const pokemonError = useReduxSelector(pokemonErrorSelector)
 
-
-  const dispatch = useReduxDispatch();
-  const incre = () => {
-    dispatch(increment());
-  };
-
-  const decre = () => {
-    dispatch(decrement());
-  };
-
-  const rest = () => {
-    dispatch(restart());
-  };
-
+  const dispatch = useReduxDispatch()
 
   useEffect(() => {
-    dispatch(get())
+    dispatch(getPokemonList())
   }, [])
 
   return (
     <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Counter {count}</h1>
-      <h1>Name: {name}</h1>
-      <input value={name} onChange={(e) => dispatch(setName(e.target.value))} />
-      <h1>Step: {step}</h1>
-      <input value={step} type="number" onChange={(e) => dispatch(setStep(Number(e.target.value)))} />
-    
-      <h1></h1>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <div>
-          <button onClick={incre}>Increment</button>
+      {pokemonList.map((item) => (
+        <div key={item.url}>
+          <img
+            className="card-img-top"
+            src={`https://unpkg.com/pokeapi-sprites@2.0.2/sprites/pokemon/other/dream-world/${extractPokemonIdFromUrl(
+              item.url,
+            )}.svg`}
+            height="200px"
+            alt="pokemoncard"
+          />
+          <h3>{item.name}</h3>
         </div>
-        <div
-          style={{
-            width: 20,
-          }}
-        />
-        <div>
-          <button onClick={decre}>Decrement</button>
-        </div>
-        <div
-          style={{
-            width: 20,
-          }}
-        />
-        <div>
-          <button onClick={() => dispatch(addFive())}>+ {step}</button>
-        </div>
-        <div
-          style={{
-            width: 20,
-          }}
-        />
-        <div>
-          <button onClick={rest}>Restart</button>
-        </div>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-			{JSON.stringify(descriptions)}
-			error: {descriptionsError}
+      ))}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
 
 // const masStateToProps = (state) => {
 //   return {
